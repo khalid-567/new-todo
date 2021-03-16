@@ -5,6 +5,21 @@ from django.contrib.auth.decorators import login_required
 from .models import Customer
 # Create your views here.
 
+@login_required(login_url='login')
+def customer_view(request, customer_id):
+	try:
+		ID = int(customer_id)
+		if Customer.objects.filter(id = ID, added_by = request.user).exists():
+			context = {
+				"my_customer": Customer.objects.get(id = ID)
+			}
+			return render(request, "task/customer.html", context)
+		else:
+			return redirect("home page")
+	except:
+		return redirect("home page")
+
+
 
 @login_required(login_url='login')
 def index(request):
@@ -19,7 +34,7 @@ def index(request):
 			email = request.POST['email'],
 			added_by = request.user
 		)
-		
+
 		new_customer.save()
 		return redirect('home page')
 		
