@@ -1,25 +1,27 @@
 from django.shortcuts import render,redirect
 from .forms import UserRegistrationForm,CustomerForm
-# from django.contrib import messages
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Customer
 # Create your views here.
 
 
-# @login_required(login_url='login')
+@login_required(login_url='login')
 def index(request):
 	form=CustomerForm()
-	customers=Customer.objects.all()
+	customers=Customer.objects.filter(added_by = request.user)
 	
 	if request.method=='POST':
 
-		form=CustomerForm(request.POST )
-	
-		if form.is_valid():
-			form.save()
-
+		new_customer = Customer(
+			first_name = request.POST['first_name'], 
+			last_name = request.POST['last_name'],
+			email = request.POST['email'],
+			added_by = request.user
+		)
 		
-			return redirect('home page')
+		new_customer.save()
+		return redirect('home page')
 		
 			
 	return render(request,'task/index.html',{'form':form,'customers':customers})
@@ -51,7 +53,7 @@ def register(request):
 		if form.is_valid():
 			form.save()
 			username=form.cleaned_data.get('username')
-			# messages.success(request,f'your account has been created! now you are able to login {username}')
+			messages.success(request,f'Your account has been created, Login now')
 
 			return redirect('login')
 		

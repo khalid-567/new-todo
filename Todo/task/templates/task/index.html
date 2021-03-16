@@ -258,6 +258,12 @@
                                                     </div>
                                                 </div>
                                             {% endfor %}
+
+                                            {% if not customers %}
+                                                <div class="alert alert-success text-center" role="alert">
+                                                    No customer added yet.
+                                                </div>
+                                            {% endif %}
                             
                                             
                                         </div>
